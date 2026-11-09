@@ -40,3 +40,10 @@ test-results
 # supabase local
 supabase/.temp
 supabase/.branches
+
+# TypeScript emitted configs (should never exist — config files are .ts only)
+*.tsbuildinfo
+tailwind.config.js
+tailwind.config.d.ts
+vite.config.js
+vite.config.d.ts
