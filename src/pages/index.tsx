@@ -51,19 +51,33 @@ function RoutePage({
   );
 }
 
+import { useTournament } from "@/features/tournament/hooks";
+
 export function Home() {
+  const { data: tournament, isLoading, error } = useTournament();
+
+  if (isLoading) return <div className="p-8 text-center">Loading tournament data...</div>;
+  if (error) return <div className="p-8 text-center text-danger">Error loading tournament.</div>;
+
   return (
-    <RoutePage
-      title="Inter-Year Football Tournament"
-      description="Follow the NIT Manipur 2026 tournament from one place."
-      shortcuts={[
-        { to: "/tournament", label: "Tournament details" },
-        { to: "/teams", label: "Browse teams" },
-        { to: "/fixtures", label: "View fixtures" },
-        { to: "/standings", label: "Check standings" },
-      ]}
-      notice="The site structure is in place. Tournament records and live updates will appear here once data integration is implemented."
-    />
+    <section className="mx-auto max-w-4xl space-y-6">
+      <header className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+          NITMN Inter-Year Football &middot; {tournament?.year || "2026"}
+        </p>
+        <h1 className="text-4xl font-bold">{tournament?.name || "Tournament"}</h1>
+        <p className="max-w-2xl text-muted-foreground">
+          Venue: {tournament?.venue || "TBD"}
+        </p>
+      </header>
+      
+      <div className="rounded-lg border border-border bg-surface p-5">
+        <h2 className="text-xl font-semibold">Tournament Status: {tournament?.status.toUpperCase()}</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+          The tournament data is successfully connected to the database!
+        </p>
+      </div>
+    </section>
   );
 }
 
@@ -158,18 +172,7 @@ export function Results() {
   );
 }
 
-export function Standings() {
-  return (
-    <RoutePage
-      title="Standings"
-      description="Group tables and team rankings."
-      shortcuts={[
-        { to: "/teams", label: "Teams" },
-        { to: "/results", label: "Results" },
-      ]}
-    />
-  );
-}
+
 
 export function Knockout() {
   return (

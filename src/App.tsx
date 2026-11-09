@@ -13,11 +13,13 @@ import {
   Fixtures,
   MatchDetail,
   Results,
-  Standings,
   Knockout,
   Champion,
   NotFound,
 } from "./pages";
+
+// New Pages (Extracted from the placeholder file)
+import Standings from "./pages/Standings";
 
 // New Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
