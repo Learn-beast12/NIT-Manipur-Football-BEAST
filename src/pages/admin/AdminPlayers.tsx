@@ -76,12 +76,12 @@ export default function AdminPlayers() {
         {/* Team Selector */}
         <select
           value={selectedTeamId}
-          disabled={loadingTeams}
           onChange={(e) => {
             setSelectedTeamId(e.target.value);
             setIsAdding(false);
           }}
-          className="rounded-md border border-border bg-surface px-4 py-2 text-sm focus:border-primary focus:outline-none"
+          disabled={loadingTeams}
+          className="rounded-md border border-border bg-surface px-4 py-2 text-sm focus:border-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">{loadingTeams ? "Loading teams..." : "Select a Team..."}</option>
           {teams?.map((t) => (

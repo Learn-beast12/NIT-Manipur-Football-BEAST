@@ -24,6 +24,8 @@ import MatchDetail from "./pages/MatchDetail";
 // New Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminOverview from "./pages/admin/AdminOverview";
+import AdminMatches from "./pages/admin/AdminMatches";
+import AdminMatchDetail from "./pages/admin/AdminMatchDetails";
 
 export default function App() {
   return (
@@ -50,8 +52,9 @@ export default function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
           <Route path="teams" element={<AdminOverview />} />
-          <Route path="players" element={<AdminOverview />} />
-          
+          <Route path="players" element={<AdminOverview />}/>
+          <Route path="matches" element={<AdminMatches />} />
+          <Route path="matches/:id" element={<AdminMatchDetail />} />{/*ADD THIS*/}
         </Route>
       </Route>
     </Routes>
