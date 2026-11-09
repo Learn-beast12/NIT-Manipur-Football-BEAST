@@ -207,25 +207,3 @@ export function NotFound() {
     />
   );
 }
-
-export function AdminLogin() {
-  return (
-    <RoutePage
-      title="Admin sign in"
-      description="Administrator access for managing the tournament."
-      shortcuts={[{ to: "/", label: "Public site" }]}
-      notice="Admin authentication will be implemented in Stage 1. This page does not accept or store credentials yet."
-    />
-  );
-}
-
-export function AdminOverview() {
-  return (
-    <RoutePage
-      title="Admin overview"
-      description="Tournament management tools."
-      shortcuts={[{ to: "/", label: "Public site" }]}
-      notice="Admin authorization and management actions will be implemented in Stage 1 and Stage 4. Do not use this page to manage production data."
-    />
-  );
-}

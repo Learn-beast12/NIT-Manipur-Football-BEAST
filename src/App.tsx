@@ -1,6 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import PublicLayout from "./layouts/PublicLayout";
 import AdminLayout from "./layouts/AdminLayout";
+import ProtectedRoute from "./features/admin/auth/ProtectedRoute";
+
+// Public Pages (Keep the old ones from index.tsx)
 import {
   Home,
   Tournament,
@@ -14,9 +17,11 @@ import {
   Knockout,
   Champion,
   NotFound,
-  AdminLogin,
-  AdminOverview,
 } from "./pages";
+
+// New Admin Pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminOverview from "./pages/admin/AdminOverview";
 
 export default function App() {
   return (
@@ -37,8 +42,12 @@ export default function App() {
       </Route>
 
       <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminOverview />} />
+
+      {/* Protected Admin Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverview />} />
+        </Route>
       </Route>
     </Routes>
   );
