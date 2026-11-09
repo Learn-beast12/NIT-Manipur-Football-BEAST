@@ -10,9 +10,6 @@ import {
   Teams,
   TeamDetail,
   Players,
-  Fixtures,
-  MatchDetail,
-  Results,
   Knockout,
   Champion,
   NotFound,
@@ -20,6 +17,9 @@ import {
 
 // New Pages (Extracted from the placeholder file)
 import Standings from "./pages/Standings";
+import Fixtures from "./pages/Fixtures";
+import Results from "./pages/Results";
+import MatchDetail from "./pages/MatchDetail";
 
 // New Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -49,6 +49,9 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
+          <Route path="teams" element={<AdminOverview />} />
+          <Route path="players" element={<AdminOverview />} />
+          
         </Route>
       </Route>
     </Routes>

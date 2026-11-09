@@ -143,21 +143,6 @@ export function Fixtures() {
   );
 }
 
-export function MatchDetail() {
-  const { id } = useParams();
-
-  return (
-    <RoutePage
-      title={id ? `Match ${id}` : "Match details"}
-      description="Match information, score, and event timeline."
-      shortcuts={[
-        { to: "/fixtures", label: "Fixtures" },
-        { to: "/results", label: "Results" },
-      ]}
-      notice="Match records have not been connected yet, so this route cannot show match details."
-    />
-  );
-}
 
 export function Results() {
   return (
