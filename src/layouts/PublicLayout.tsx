@@ -7,16 +7,16 @@ const NAV = [
   { to: "/players", label: "Players" },
   { to: "/fixtures", label: "Fixtures" },
   { to: "/results", label: "Results" },
-  { to: "/standings", label: "Standings" },
   { to: "/knockout", label: "Knockout" },
   { to: "/champion", label: "Champion" },
-  { to: "/standings", label: "Standings(view)" },
+  { to: "/standings", label: "Standings" },
+  { to: "/rules", label: "Rules" },
 ];
 
 export default function PublicLayout() {
   return (
-    <div className="flex min-h-full flex-col">
-      <header className="border-b border-border bg-surface/80 backdrop-blur">
+    <div className="public-site flex min-h-screen flex-col">
+      <header className="sticky top-0 z-30 border-b border-white/5 bg-background/80 backdrop-blur-xl">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <span className="grid h-9 w-9 place-items-center rounded-md bg-primary font-heading text-lg font-bold text-primary-foreground">
@@ -64,7 +64,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-border bg-surface">
+      <footer className="border-t border-white/5 bg-background/75 backdrop-blur-xl">
         <div className="container flex flex-col gap-1 py-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
           <span>
             © 2026 NIT Manipur · Inter-Year Football Tournament

@@ -20,6 +20,7 @@ import Teams from "./pages/Teams";
 import Players from "./pages/Players";
 import Knockout from "./pages/Knockout";
 import Champion from "./pages/Champion";
+import Rules from "./pages/Rules";
 
 
 
@@ -50,13 +51,13 @@ export default function App() {
         <Route path="/standings" element={<Standings />} />
         <Route path="/knockout" element={<Knockout />} />
         <Route path="/champion" element={<Champion />} />
+        <Route path="/rules" element={<Rules />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* Protected Admin Routes */}
-      // Make sure your admin routes look exactly like this:
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />

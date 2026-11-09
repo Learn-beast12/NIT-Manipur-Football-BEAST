@@ -5,13 +5,10 @@ const ADMIN_NAV = [
   { to: "/admin/teams", label: "Teams" },
   { to: "/admin/players", label: "Players" },
   { to: "/admin/matches", label: "Matches" },
-  { to: "/admin/fixtures", label: "Fixtures" },
-  { to: "/admin/standings", label: "Standings (view)" },
   { to: "/admin/knockout", label: "Knockout" },
   { to: "/admin/announcements", label: "Announcements" },
   { to: "/admin/settings", label: "Settings" },
   { to: "/admin/export", label: "Export" },
-  { to: "/admin/audit-logs", label: "Audit logs" },
 ];
 
 export default function AdminLayout() {

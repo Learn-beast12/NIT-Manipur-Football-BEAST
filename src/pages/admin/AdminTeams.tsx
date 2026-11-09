@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useTeams } from "@/features/tournament/hooks";
 import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
@@ -77,6 +78,7 @@ export default function AdminTeams() {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
       queryClient.invalidateQueries({ queryKey: ["matches"] });
       queryClient.invalidateQueries({ queryKey: ["standings"] });
+      queryClient.invalidateQueries({ queryKey: ["all_players"] });
     }
   };
 
@@ -185,6 +187,12 @@ export default function AdminTeams() {
                 <td className="px-4 py-3 text-muted-foreground">{team.academic_year}</td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex justify-end gap-2">
+                    <Link
+                      to={`/admin/players?teamId=${team.id}`}
+                      className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-elevated hover:text-foreground"
+                    >
+                      Players
+                    </Link>
                     <button
                       onClick={() => handleEditClick(team)}
                       className="p-1.5 text-muted-foreground hover:text-primary transition-colors"
