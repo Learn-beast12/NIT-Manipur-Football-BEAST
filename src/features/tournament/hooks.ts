@@ -1,8 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Tournament, Team, Match } from "@/types";
+import { useEffect } from "react";
+
+// Helper to subscribe to realtime changes
+function useRealtimeSubscription(table: string, queryKey: string[]) {
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const channel = supabase
+      .channel(`public:${table}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table },
+        () => {
+          // When DB changes, refetch the queries
+          queryClient.invalidateQueries({ queryKey });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [table, queryClient, queryKey]);
+}
 
 export function useTournament() {
+  useRealtimeSubscription("tournaments", ["tournament"]);
   return useQuery({
     queryKey: ["tournament"],
     queryFn: async (): Promise<Tournament> => {
@@ -14,6 +38,7 @@ export function useTournament() {
 }
 
 export function useTeams() {
+  useRealtimeSubscription("teams", ["teams"]);
   return useQuery({
     queryKey: ["teams"],
     queryFn: async (): Promise<Team[]> => {
@@ -25,6 +50,7 @@ export function useTeams() {
 }
 
 export function useMatches() {
+  useRealtimeSubscription("matches", ["matches"]);
   return useQuery({
     queryKey: ["matches"],
     queryFn: async (): Promise<Match[]> => {
@@ -40,6 +66,7 @@ export function useMatches() {
 }
 
 export function useStandings() {
+  useRealtimeSubscription("matches", ["standings"]);
   return useQuery({
     queryKey: ["standings"],
     queryFn: async () => {
@@ -53,13 +80,9 @@ export function useStandings() {
         .eq("stage", "league");
         
       if (matchError) throw matchError;
-
       if (!viewData || !matchData) return [];
 
-      // Import and use our H2H logic
       const { sortStandings } = await import("@/features/standings/tieBreaker");
-      
-      // Pass the data through the sorter
       return sortStandings(viewData as any, matchData as any);
     },
   });
