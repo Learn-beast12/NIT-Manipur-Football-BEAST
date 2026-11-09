@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 6% 4%;
+    --foreground: 0 0% 96%;
+    --surface: 240 4% 8%;
+    --elevated: 240 3% 11%;
+    --border: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --primary: 160 84% 39%;
+    --primary-hover: 161 94% 30%;
+    --primary-foreground: 240 6% 4%;
+    --gold: 45 91% 53%;
+    --danger: 0 84% 60%;
+    --warning: 38 92% 50%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
