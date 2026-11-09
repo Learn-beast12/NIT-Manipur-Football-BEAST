@@ -1,197 +1,121 @@
-import { Link, useParams } from "react-router-dom";
-
-type Shortcut = {
-  to: string;
-  label: string;
-};
-
-function RoutePage({
-  title,
-  description,
-  shortcuts = [],
-  notice = "This page is ready for tournament data, but its data loading and management features have not been implemented yet.",
-}: {
-  title: string;
-  description: string;
-  shortcuts?: Shortcut[];
-  notice?: string;
-}) {
-  return (
-    <section className="mx-auto max-w-4xl space-y-6">
-      <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          NITMN Inter-Year Football &middot; 2026
-        </p>
-        <h1 className="text-4xl font-bold">{title}</h1>
-        <p className="max-w-2xl text-muted-foreground">{description}</p>
-      </header>
-
-      <div className="rounded-lg border border-border bg-surface p-5">
-        <h2 className="text-xl font-semibold">Page setup in progress</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">{notice}</p>
-      </div>
-
-      {shortcuts.length > 0 && (
-        <nav
-          aria-label={`${title} related pages`}
-          className="flex flex-wrap gap-3"
-        >
-          {shortcuts.map((shortcut) => (
-            <Link
-              key={shortcut.to}
-              to={shortcut.to}
-              className="rounded-md border border-border px-4 py-2 text-sm transition-colors hover:border-primary hover:text-primary"
-            >
-              {shortcut.label}
-            </Link>
-          ))}
-        </nav>
-      )}
-    </section>
-  );
-}
-
-import { useTournament } from "@/features/tournament/hooks";
+import { Link } from "react-router-dom";
+import { useTournament, useTeams, useMatches, useStandings, useAnnouncements } from "@/features/tournament/hooks";
+import MatchCard from "@/features/matches/MatchCard";
+import { Megaphone, Trophy, CalendarDays, ArrowRight } from "lucide-react";
 
 export function Home() {
-  const { data: tournament, isLoading, error } = useTournament();
+  const { data: tournament } = useTournament();
+  const { data: teams } = useTeams();
+  const { data: matches } = useMatches();
+  const { data: standings } = useStandings();
+  const { data: announcements } = useAnnouncements();
 
-  if (isLoading) return <div className="p-8 text-center">Loading tournament data...</div>;
-  if (error) return <div className="p-8 text-center text-danger">Error loading tournament.</div>;
+  const recentMatches = matches?.filter(m => m.status === "completed").slice(-3).reverse() || [];
+  const upcomingMatches = matches?.filter(m => m.status === "scheduled" || m.status === "live").slice(0, 3) || [];
+  const topTeams = standings?.slice(0, 4) || [];
 
   return (
-    <section className="mx-auto max-w-4xl space-y-6">
-      <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-          NITMN Inter-Year Football &middot; {tournament?.year || "2026"}
-        </p>
-        <h1 className="text-4xl font-bold">{tournament?.name || "Tournament"}</h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Venue: {tournament?.venue || "TBD"}
-        </p>
-      </header>
-      
-      <div className="rounded-lg border border-border bg-surface p-5">
-        <h2 className="text-xl font-semibold">Tournament Status: {tournament?.status.toUpperCase()}</h2>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          The tournament data is successfully connected to the database!
-        </p>
+    <div className="space-y-12 pb-12">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden rounded-2xl bg-surface border border-border p-8 md:p-12 text-center md:text-left">
+        <div className="relative z-10 md:w-2/3">
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary mb-4">
+            {tournament?.status || "Upcoming"}
+          </span>
+          <h1 className="mb-4 text-4xl font-heading font-bold md:text-5xl lg:text-6xl">
+            {tournament?.name || "Inter-Year Football"}
+          </h1>
+          <p className="mb-8 text-lg text-muted-foreground">
+            Follow the {tournament?.year || "2026"} tournament. Live scores, standings, and fixtures all in one place.
+          </p>
+          <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+            <Link to="/fixtures" className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-hover">
+              View Fixtures
+            </Link>
+            <Link to="/standings" className="rounded-md border border-border bg-background px-6 py-2.5 text-sm font-semibold hover:bg-elevated">
+              Points Table
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Announcements */}
+      {announcements && announcements.length > 0 && (
+        <section>
+          <h2 className="mb-4 text-2xl font-heading font-bold flex items-center gap-2">
+            <Megaphone className="h-5 w-5 text-primary" /> Latest News
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {announcements.map(ann => (
+              <div key={ann.id} className="rounded-lg border border-border bg-surface p-4">
+                <h3 className="font-semibold">{ann.title}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{ann.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Main Column: Matches */}
+        <div className="lg:col-span-2 space-y-8">
+          <section>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-2xl font-heading font-bold flex items-center gap-2">
+                <CalendarDays className="h-5 w-5 text-primary" /> Upcoming Matches
+              </h2>
+              <Link to="/fixtures" className="text-sm text-primary hover:underline flex items-center gap-1">
+                View All <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {upcomingMatches.map(match => (
+                <MatchCard key={match.id} match={match} teams={teams || []} />
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-2xl font-heading font-bold">Recent Results</h2>
+              <Link to="/results" className="text-sm text-primary hover:underline flex items-center gap-1">
+                View All <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {recentMatches.map(match => (
+                <MatchCard key={match.id} match={match} teams={teams || []} />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Sidebar: Standings Preview */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-heading font-bold flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-gold" /> Top Teams
+            </h2>
+            <Link to="/standings" className="text-xs text-primary hover:underline">Full Table</Link>
+          </div>
+          <div className="rounded-lg border border-border bg-surface overflow-hidden">
+            {topTeams.map((team, index) => (
+              <div key={team.team_id} className="flex items-center justify-between border-b border-border p-3 last:border-0">
+                <div className="flex items-center gap-3">
+                  <span className="w-5 text-center text-sm font-bold text-muted-foreground">{index + 1}</span>
+                  <span className="font-semibold text-sm">{team.team_name}</span>
+                </div>
+                <div className="text-sm font-bold tabular">{team.points} pts</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-export function Tournament() {
-  return (
-    <RoutePage
-      title="Tournament"
-      description="Tournament format, dates, and competition details."
-      shortcuts={[
-        { to: "/teams", label: "Teams" },
-        { to: "/fixtures", label: "Fixtures" },
-      ]}
-    />
-  );
-}
-
-export function Teams() {
-  return (
-    <RoutePage
-      title="Teams"
-      description="Explore the teams competing in the tournament."
-      shortcuts={[{ to: "/players", label: "Players" }]}
-    />
-  );
-}
-
-export function TeamDetail() {
-  const { id } = useParams();
-
-  return (
-    <RoutePage
-      title={id ? `Team ${id}` : "Team details"}
-      description="Team profile, roster, and tournament performance."
-      shortcuts={[
-        { to: "/teams", label: "All teams" },
-        { to: "/fixtures", label: "Fixtures" },
-      ]}
-      notice="Team records have not been connected yet, so this route cannot show a team profile."
-    />
-  );
-}
-
-export function Players() {
-  return (
-    <RoutePage
-      title="Players"
-      description="Find player profiles and their teams."
-      shortcuts={[{ to: "/teams", label: "Browse teams" }]}
-    />
-  );
-}
-
-export function Fixtures() {
-  return (
-    <RoutePage
-      title="Fixtures"
-      description="Upcoming matches and the tournament schedule."
-      shortcuts={[
-        { to: "/results", label: "Results" },
-        { to: "/standings", label: "Standings" },
-      ]}
-    />
-  );
-}
-
-
-export function Results() {
-  return (
-    <RoutePage
-      title="Results"
-      description="Scores and completed match summaries."
-      shortcuts={[
-        { to: "/fixtures", label: "Fixtures" },
-        { to: "/standings", label: "Standings" },
-      ]}
-    />
-  );
-}
-
-
-
-export function Knockout() {
-  return (
-    <RoutePage
-      title="Knockout stage"
-      description="Follow the tournament bracket and elimination matches."
-      shortcuts={[
-        { to: "/fixtures", label: "Fixtures" },
-        { to: "/champion", label: "Champion" },
-      ]}
-    />
-  );
-}
-
-export function Champion() {
-  return (
-    <RoutePage
-      title="Champion"
-      description="The tournament champion will be shown here."
-      shortcuts={[
-        { to: "/standings", label: "Standings" },
-        { to: "/knockout", label: "Knockout stage" },
-      ]}
-    />
-  );
-}
-
-export function NotFound() {
-  return (
-    <RoutePage
-      title="Page not found"
-      description="The page you requested does not exist."
-      shortcuts={[{ to: "/", label: "Return home" }]}
-      notice="Check the address and try again."
-    />
-  );
-}
+// Keep your existing exports below this line:
+export function Tournament() { return <div>Tournament Page</div>; }
+export function TeamDetail() { return <div>Team Detail</div>; }
+export function NotFound() { return <div>404 Not Found</div>; }

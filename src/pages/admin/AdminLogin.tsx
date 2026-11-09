@@ -1,71 +1,77 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { signIn } from "@/lib/auth";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { useAuth } from "@/features/admin/auth/useAuth";
+import { signOut } from "@/lib/auth";
 
-export default function AdminLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const ADMIN_NAV = [
+  { to: "/admin", label: "Overview" },
+  { to: "/admin/teams", label: "Teams" },
+  { to: "/admin/players", label: "Players" },
+  { to: "/admin/matches", label: "Matches" },
+  { to: "/admin/knockout", label: "Knockout" },
+  { to: "/admin/announcements", label: "Announcements" },
+  { to: "/admin/settings", label: "Settings" },
+  { to: "/admin/export", label: "Export" },
+];
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    try {
-      await signIn(email, password);
-      navigate("/admin"); // Redirect on success
-    } catch (err: any) {
-      setError(err.message || "Invalid credentials.");
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function AdminLayout() {
+  const location = useLocation();
+  const { session } = useAuth();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-6 shadow-lg">
-        <h1 className="mb-6 text-center font-heading text-2xl font-bold">
-          Admin Login
-        </h1>
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
+      <aside className="hidden w-64 flex-col border-r border-border bg-surface md:flex">
+        <div className="flex h-16 items-center border-b border-border px-6">
+          <Link to="/admin" className="font-heading text-lg font-bold tracking-wide">
+            Admin Panel
+          </Link>
+        </div>
+        <nav className="flex-1 space-y-1 p-4">
+          {ADMIN_NAV.map((item) => {
+            const isActive = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:bg-elevated hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="border-t border-border p-4">
+          <div className="mb-4 text-xs text-muted-foreground truncate">
+            {session?.user.email}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              ← Back to public site
+            </Link>
+            <button
+              onClick={() => signOut()}
+              className="text-left text-sm text-danger hover:underline"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </aside>
 
-        {error && (
-          <div className="mb-4 rounded bg-danger/10 p-3 text-sm text-danger">
-            {error}
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col">
+        <header className="flex h-16 items-center border-b border-border bg-surface px-6 md:hidden">
+          <span className="font-heading font-bold">Admin Panel</span>
+        </header>
+        <main className="flex-1 p-6">
+          <div className="mx-auto max-w-5xl">
+            <Outlet />
           </div>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm text-muted-foreground">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-muted-foreground">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </form>
+        </main>
       </div>
     </div>
   );

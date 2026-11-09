@@ -10,6 +10,7 @@ const NAV = [
   { to: "/standings", label: "Standings" },
   { to: "/knockout", label: "Knockout" },
   { to: "/champion", label: "Champion" },
+  { to: "/standings", label: "Standings(view)" },
 ];
 
 export default function PublicLayout() {

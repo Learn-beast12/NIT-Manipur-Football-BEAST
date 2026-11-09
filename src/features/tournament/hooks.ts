@@ -7,8 +7,9 @@ import { useEffect } from "react";
 function useRealtimeSubscription(table: string, queryKey: string[]) {
   const queryClient = useQueryClient();
   useEffect(() => {
+    const channelName = `public:${table}:${Math.random().toString(36).slice(2)}`; // Unique channel name to avoid conflicts
     const channel = supabase
-      .channel(`public:${table}`)
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table },
@@ -86,4 +87,25 @@ export function useStandings() {
       return sortStandings(viewData as any, matchData as any);
     },
   });
+}
+export type Announcement = {
+    id: string;
+    title: string;
+    body: string;
+    published_at: string;
+    is_published: boolean;
+};
+export function useAnnouncements() {
+    useRealtimeSubscription("announcements", ["announcements"]);
+    return useQuery({
+        queryKey: ["announcements"],
+        queryFn: async (): Promise<Announcement[]> => {
+            const { data, error } = await supabase
+            .from("announcements")
+            .select("*").
+            order("published_at", { ascending: false });
+        if (error) throw error;
+        return data;
+        },
+    });
 }

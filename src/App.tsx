@@ -7,11 +7,7 @@ import ProtectedRoute from "./features/admin/auth/ProtectedRoute";
 import {
   Home,
   Tournament,
-  Teams,
   TeamDetail,
-  Players,
-  Knockout,
-  Champion,
   NotFound,
 } from "./pages";
 
@@ -20,12 +16,24 @@ import Standings from "./pages/Standings";
 import Fixtures from "./pages/Fixtures";
 import Results from "./pages/Results";
 import MatchDetail from "./pages/MatchDetail";
+import Teams from "./pages/Teams";
+import Players from "./pages/Players";
+import Knockout from "./pages/Knockout";
+import Champion from "./pages/Champion";
+
+
 
 // New Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminOverview from "./pages/admin/AdminOverview";
+import AdminTeams from "./pages/admin/AdminTeams";
+import AdminPlayers from "./pages/admin/AdminPlayers";
 import AdminMatches from "./pages/admin/AdminMatches";
 import AdminMatchDetail from "./pages/admin/AdminMatchDetails";
+import AdminKnockout from "./pages/admin/AdminKnockout";
+import AdminAnnouncements from"./pages/admin/AdminAnnouncement";
+import AdminExport from "./pages/admin/AdminExport";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 export default function App() {
   return (
@@ -48,13 +56,18 @@ export default function App() {
       <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* Protected Admin Routes */}
+      // Make sure your admin routes look exactly like this:
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminOverview />} />
-          <Route path="teams" element={<AdminOverview />} />
-          <Route path="players" element={<AdminOverview />}/>
+          <Route path="teams" element={<AdminTeams />} />
+          <Route path="players" element={<AdminPlayers />} />
           <Route path="matches" element={<AdminMatches />} />
-          <Route path="matches/:id" element={<AdminMatchDetail />} />{/*ADD THIS*/}
+          <Route path="matches/:id" element={<AdminMatchDetail />} />
+          <Route path="knockout" element={<AdminKnockout />} />
+          <Route path="announcements" element={<AdminAnnouncements />} />
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="export" element={<AdminExport />} />
         </Route>
       </Route>
     </Routes>

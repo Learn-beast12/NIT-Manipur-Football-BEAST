@@ -41,3 +41,11 @@ export type Match = {
   went_to_extra_time: boolean;
   venue: string | null;
 };
+export type MatchEvent = {
+    id: string;
+    match_id: string;
+    player_id: string;
+    event_type: 'goal' | 'own_goal' | 'yellow_card' | 'red_card' | 'substitution_in' | 'substitution_out' | 'penalty_miss' | 'penalty_save' | 'penalty_goal';
+    minute: number;
+    is_shootout: boolean;
+}
